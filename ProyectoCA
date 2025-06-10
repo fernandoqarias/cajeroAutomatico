@@ -1,0 +1,292 @@
+#include <iostream>
+
+using namespace std;
+
+ // NUM_CUENTAS = 3, número de cuentas predefinidas
+
+// Clase que representa una cuenta bancaria
+class Cuenta {
+private:
+    int numeroCuenta;
+    int nip;
+    double saldo;
+
+public:
+    // Constructor 
+    Cuenta(int cuentaIngresada, int nipIngresado, double saldoInicial) {
+        numeroCuenta = cuentaIngresada;
+        nip = nipIngresado;
+        saldo = saldoInicial;
+    }
+
+    int obtenerNumeroCuenta() const { return numeroCuenta; }
+
+    bool esNIPValido(int nipUsuario) const {
+        return nip == nipUsuario;
+    }
+
+    double obtenerSaldo() const { return saldo; }
+    
+    bool retirar(double monto) {
+    if (monto > saldo) return false;
+    saldo -= monto;
+    return true;
+    }
+
+};
+
+// Clase que representa la base de datos del banco
+class BaseDatosBanco {
+private:
+    Cuenta** listaCuentas; // puntero a arreglo de punteros a cuentas
+
+public:
+    BaseDatosBanco() {
+        // Crear arreglo dinámico de punteros a cuentas
+        listaCuentas = new Cuenta*[3];
+        listaCuentas[0] = new Cuenta(12345, 11111, 1000.0);
+        listaCuentas[1] = new Cuenta(23456, 22222, 500.0);
+        listaCuentas[2] = new Cuenta(34567, 33333, 750.0);
+    }
+
+    Cuenta* autenticarUsuario(int cuenta, int nip) {
+        for (int i = 0; i < 3; i++) {
+            if (listaCuentas[i]->obtenerNumeroCuenta() == cuenta &&
+                listaCuentas[i]->esNIPValido(nip)) {
+                return listaCuentas[i];
+            }
+        }
+        return nullptr;
+    }
+
+    ~BaseDatosBanco() {
+        for (int i = 0; i < 3; i++) {
+            delete listaCuentas[i];
+        }
+        delete[] listaCuentas;
+    }
+};
+
+class DispensadorEfectivo {
+private:
+    int denominaciones[5] = {200, 100, 50, 20, 10};
+    int cantidadBilletes[5] = {10, 10, 10, 10, 10};
+
+public:
+    // Verificar si se puede entregar el monto, llenar arreglo billetesAEntregar
+    bool puedeDispensar(int monto, int billetesAEntregar[5]) {
+        int montoRestante = monto;
+
+        // Inicializar billetesAEntregar
+        for (int i = 0; i < 5; i++) {
+            billetesAEntregar[i] = 0;
+        }
+
+        for (int i = 0; i < 5; i++) {
+            int billetesNecesarios = montoRestante / denominaciones[i];
+            int billetesAUsar = (billetesNecesarios < cantidadBilletes[i]) ? billetesNecesarios : cantidadBilletes[i];
+
+            billetesAEntregar[i] = billetesAUsar;
+            montoRestante -= billetesAUsar * denominaciones[i];
+        }
+
+        return montoRestante == 0;
+    }
+
+    // Descontar los billetes usados
+    void dispensar(int billetesAEntregar[5]) {
+        for (int i = 0; i < 5; i++) {
+            cantidadBilletes[i] -= billetesAEntregar[i];
+        }
+    }
+
+    // Obtener monto total disponible
+    int obtenerMontoDisponible() const {
+        int total = 0;
+        for (int i = 0; i < 5; i++) {
+            total += denominaciones[i] * cantidadBilletes[i];
+        }
+        return total;
+    }
+
+    // Mostrar estado del dispensador
+    void mostrarEstado() const {
+        cout << "\nEstado actual del dispensador:" << endl;
+        for (int i = 0; i < 5; i++) {
+            cout << "Bs" << denominaciones[i] << ": " << cantidadBilletes[i] << " billetes" << endl;
+        }
+    }
+    
+    
+    int getDenominacion(int i) const {
+    return denominaciones[i];
+    }
+
+    
+};
+
+
+// Función principal
+int main() {
+   BaseDatosBanco baseDatos;
+   DispensadorEfectivo dispensador;
+   
+    while (true) {
+
+    int cuentaIngresada;
+    int nipIngresado;
+    Cuenta* cuenta = nullptr;
+
+    while (cuenta == nullptr) {
+        system("cls"); // Limpia pantalla antes de mostrar el menú de nuevo
+
+        cout << "=== Bienvenido al Cajero Automatico ===" << endl;
+        cout << "Ingrese su numero de cuenta: ";
+        cin >> cuentaIngresada;
+        
+         if (cuentaIngresada == -1) {
+                cout << "\nCerrando el cajero automatico..." << endl;
+                return 0; // Finaliza el programa
+            }
+
+        cout << "Ingrese su NIP: ";
+        cin >> nipIngresado;
+
+        cuenta = baseDatos.autenticarUsuario(cuentaIngresada, nipIngresado);
+
+        if (cuenta == nullptr) {
+            cout << "Numero de cuenta o NIP incorrecto." << endl;
+            cout << "Presione ENTER para intentar de nuevo...";
+            cin.ignore(); // limpiar buffer
+            cin.get();    // esperar ENTER
+        }
+    }
+    
+    
+    int opcion;
+        do {
+            system("cls");
+            cout << "=== Menu Principal ===" << endl;
+            cout << "1 - Ver saldo" << endl;
+            cout << "2 - Retirar dinero" << endl;
+            cout << "3 - Depositar dinero" << endl;
+            cout << "4 - Salir" << endl;
+            cout << "Seleccione una opcion: ";
+            cin >> opcion;
+
+            switch (opcion) {
+                case 1:
+                	system("cls");
+                    cout << "\nSu saldo actual es: Bs" << cuenta->obtenerSaldo() << endl;
+                    cout << "Presione ENTER para continuar...";
+                    cin.ignore();
+                    cin.get();
+                    break;
+                case 2:{
+                	system("cls");
+                    int montoRetiro;
+                    int billetesAEntregar[5];
+
+                    cout << "\nIngrese el monto que desea retirar (multiplo de Bs10): ";
+                    cin >> montoRetiro;
+
+                    // Validar que sea multiplo de 10
+                if (montoRetiro % 10 != 0) {
+                    cout << "El monto debe ser multiplo de Bs10." << endl;
+                    cout << "Presione ENTER para continuar...";
+                    cin.ignore();
+                    cin.get();
+                    break;
+                }
+
+                    // Validar saldo del usuario
+                if (montoRetiro > cuenta->obtenerSaldo()) {
+                    cout << "Saldo insuficiente. Su saldo actual es: Bs" << cuenta->obtenerSaldo() << endl;
+                    cout << "Presione ENTER para continuar...";
+                    cin.ignore();
+                    cin.get();
+                    break;
+                }
+
+                    // Validar si el dispensador puede entregar el monto
+                if (!dispensador.puedeDispensar(montoRetiro, billetesAEntregar)) {
+                    cout << "El cajero no puede dispensar el monto solicitado con los billetes disponibles." << endl;
+                    dispensador.mostrarEstado();
+                    cout << "Presione ENTER para continuar...";
+                    cin.ignore();
+                    cin.get();
+                    break;
+                }
+
+                    // Si todo OK ? realizar retiro
+                   cuenta->retirar(montoRetiro);
+                   dispensador.dispensar(billetesAEntregar);
+
+                   cout << "\nPor favor tome su dinero: " << endl;
+                for (int i = 0; i < 5; i++) {
+                 if (billetesAEntregar[i] > 0) {
+                   cout << "Bs" << dispensador.getDenominacion(i)<< " x " << billetesAEntregar[i] << " billetes" << endl;
+                    }
+                }
+
+                   cout << "Su nuevo saldo es: Bs" << cuenta->obtenerSaldo() << endl<<endl;
+                   dispensador.mostrarEstado();
+
+                   cout << "Presione ENTER para continuar...";
+                   cin.ignore();
+                   cin.get();
+
+                   break;
+                }
+                    
+                case 3: {
+                	system("cls");
+                   int montoCentavos;
+
+                   cout << "\nIngrese el monto que desea depositar (en centavos, ej: 125 = Bs1.25), o 0 para cancelar: ";
+                   cin >> montoCentavos;
+
+                if (montoCentavos == 0) {
+                   cout << "Transaccion cancelada." << endl<<endl;
+                   cout << "Presione ENTER para continuar...";
+                   cin.ignore();
+                   cin.get();
+                   break;
+                }
+
+                // Convertir a Bs
+                double montoBs = montoCentavos / 100.0;
+
+                cout << "\nDeposito exitoso. Se han depositado Bs" << montoBs << " en su cuenta." <<endl<<endl;
+                cout << "Este dinero no esta disponible de inmediato para retirarse."<<endl; 
+                cout<<"El banco debe verificar fisicamente el monto del efectivo depositado" <<endl<<endl;
+                cin.ignore();
+                cout << "Presione ENTER para continuar...";
+                cin.get();
+
+                break;
+            }
+                    
+                case 4:
+                	system("cls");
+                    cout << "\nGracias por usar el cajero. Hasta pronto!" <<endl<<endl;
+                    cout << "Presione ENTER para cerrar su sesion...";
+                    cin.ignore();
+                    cin.get();
+                    break;
+                default:
+                    cout << "\nOpcion invalida. Intente de nuevo." <<endl<<endl;
+                    cout << "Presione ENTER para continuar...";
+                    cin.ignore();
+                    cin.get();
+                    break;
+            }
+        } while (opcion != 4);
+
+
+   }
+  
+  
+   return 0; 
+    
+}
