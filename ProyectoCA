@@ -166,78 +166,102 @@ int main() {
     int opcion;
         do {
             system("cls");
-            cout << "=== Menu Principal ===" << endl;
-            cout << "1 - Ver saldo" << endl;
-            cout << "2 - Retirar dinero" << endl;
-            cout << "3 - Depositar dinero" << endl;
-            cout << "4 - Salir" << endl;
-            cout << "Seleccione una opcion: ";
+            cout << "Menu Principal:" << endl;
+            cout << "     1 - Ver mi saldo" << endl;
+            cout << "     2 - Retirar efectivo" << endl;
+            cout << "     3 - Depositar fondos" << endl;
+            cout << "     4 - Salir" << endl;
+            cout << "Escriba una opcion: ";
             cin >> opcion;
 
             switch (opcion) {
                 case 1:
                 	system("cls");
-                    cout << "\nSu saldo actual es: Bs" << cuenta->obtenerSaldo() << endl;
+                    cout << "\nSu saldo actual es: Bs" << cuenta->obtenerSaldo() << endl << endl;
                     cout << "Presione ENTER para continuar...";
                     cin.ignore();
                     cin.get();
                     break;
                 case 2:{
-                	system("cls");
-                    int montoRetiro;
+                    system("cls");
+                    int opcionRetiro;
+                    int montoRetiro = 0;
                     int billetesAEntregar[5];
 
-                    cout << "\nIngrese el monto que desea retirar (multiplo de Bs10): ";
-                    cin >> montoRetiro;
 
-                    // Validar que sea multiplo de 10
-                if (montoRetiro % 10 != 0) {
-                    cout << "El monto debe ser multiplo de Bs10." << endl;
+                    cout << "Opciones de retiro:" << endl;
+                    cout << "     1 - Bs10    4 - Bs100" << endl;
+                    cout << "     2 - Bs20    5 - Bs200" << endl;
+                    cout << "     3 - Bs50    6 - Cancelar Transaccion" << endl;
+                    cout << "Elija una opcion de retiro (1 a 6): ";
+                    cin >> opcionRetiro;
+
+                    switch (opcionRetiro) {
+                    case 1: montoRetiro = 10; break;
+                    case 2: montoRetiro = 20; break;
+                    case 3: montoRetiro = 50; break;
+                    case 4: montoRetiro = 100; break;
+                    case 5: montoRetiro = 200; break;
+                    case 6:
+                    system("cls");
+                    cout << "Transaccion cancelada." << endl;
                     cout << "Presione ENTER para continuar...";
                     cin.ignore();
                     cin.get();
                     break;
-                }
+                    default:
+                    system("cls");
+                    cout << "Opcion invalida. Intente de nuevo." << endl;
+                    cout << "Presione ENTER para continuar...";
+                    cin.ignore();
+                    cin.get();
+                    break;
+                    }
 
-                    // Validar saldo del usuario
-                if (montoRetiro > cuenta->obtenerSaldo()) {
+                    if (opcionRetiro >= 1 && opcionRetiro <= 5) {
+                    if (montoRetiro > cuenta->obtenerSaldo()) {
+                    system("cls");
                     cout << "Saldo insuficiente. Su saldo actual es: Bs" << cuenta->obtenerSaldo() << endl;
-                    cout << "Presione ENTER para continuar...";
+                    cout << "Presione ENTER para seleccionar un monto menor...";
                     cin.ignore();
                     cin.get();
-                    break;
-                }
+                    continue;
+                    }
 
-                    // Validar si el dispensador puede entregar el monto
-                if (!dispensador.puedeDispensar(montoRetiro, billetesAEntregar)) {
+                    if (!dispensador.puedeDispensar(montoRetiro, billetesAEntregar)) {
+                    system("cls");
                     cout << "El cajero no puede dispensar el monto solicitado con los billetes disponibles." << endl;
                     dispensador.mostrarEstado();
+                    cout << "Presione ENTER para seleccionar un monto diferente...";
+                    cin.ignore();
+                    cin.get();
+                    continue;
+                    }
+
+                    cuenta->retirar(montoRetiro);
+                    dispensador.dispensar(billetesAEntregar);
+                    
+                    system("cls");
+                    cout << "\nPor favor tome su dinero: " << endl;
+                    for (int i = 0; i < 5; i++) {
+                      if (billetesAEntregar[i] > 0) {
+                          cout << "Bs" << dispensador.getDenominacion(i) << " x " << billetesAEntregar[i] << " billetes" << endl;
+                       }
+                    }
+
+                    cout << "Su nuevo saldo es: Bs" << cuenta->obtenerSaldo() << endl << endl;
+                    dispensador.mostrarEstado();
+
+                    cout << endl;
                     cout << "Presione ENTER para continuar...";
                     cin.ignore();
                     cin.get();
-                    break;
-                }
-
-                    // Si todo OK ? realizar retiro
-                   cuenta->retirar(montoRetiro);
-                   dispensador.dispensar(billetesAEntregar);
-
-                   cout << "\nPor favor tome su dinero: " << endl;
-                for (int i = 0; i < 5; i++) {
-                 if (billetesAEntregar[i] > 0) {
-                   cout << "Bs" << dispensador.getDenominacion(i)<< " x " << billetesAEntregar[i] << " billetes" << endl;
                     }
-                }
 
-                   cout << "Su nuevo saldo es: Bs" << cuenta->obtenerSaldo() << endl<<endl;
-                   dispensador.mostrarEstado();
+  
 
-                   cout << "Presione ENTER para continuar...";
-                   cin.ignore();
-                   cin.get();
-
-                   break;
-                }
+                    break;
+                    }
                     
                 case 3: {
                 	system("cls");
