@@ -84,20 +84,22 @@ public:
 
 class DispensadorEfectivo {
 private:
-    int denominaciones[5] = {200, 100, 50, 20, 10};
-    int cantidadBilletes[5] = {10, 10, 10, 10, 10};
+	
+	const int numDenominaciones = 12;
+    double denominaciones[12] = {200, 100, 50, 20, 10, 5, 2, 1, 0.5, 0.2, 0.1, 0.01};
+    int cantidadBilletes[12] = {10, 10, 10, 10, 10, 20, 30, 50, 100, 200, 500, 1000};
 
 public:
     // Verificar si se puede entregar el monto, llenar arreglo billetesAEntregar
-    bool puedeDispensar(int monto, int billetesAEntregar[5]) {
+    bool puedeDispensar(int monto, int billetesAEntregar[12]) {
         int montoRestante = monto;
 
         // Inicializar billetesAEntregar
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < numDenominaciones ; i++) {
             billetesAEntregar[i] = 0;
         }
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < numDenominaciones ; i++) {
             int billetesNecesarios = montoRestante / denominaciones[i];
             int billetesAUsar = (billetesNecesarios < cantidadBilletes[i]) ? billetesNecesarios : cantidadBilletes[i];
 
@@ -109,8 +111,8 @@ public:
     }
 
     // Descontar los billetes usados
-    void dispensar(int billetesAEntregar[5]) {
-        for (int i = 0; i < 5; i++) {
+    void dispensar(int billetesAEntregar[12]) {
+        for (int i = 0; i < numDenominaciones ; i++) {
             cantidadBilletes[i] -= billetesAEntregar[i];
         }
     }
@@ -118,7 +120,7 @@ public:
     // Obtener monto total disponible
     int obtenerMontoDisponible() const {
         int total = 0;
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < numDenominaciones ; i++) {
             total += denominaciones[i] * cantidadBilletes[i];
         }
         return total;
@@ -127,10 +129,17 @@ public:
     // Mostrar estado del dispensador
     void mostrarEstado() const {
         cout << "\nEstado actual del dispensador:" << endl;
-        for (int i = 0; i < 5; i++) {
-            cout << "Bs" << denominaciones[i] << ": " << cantidadBilletes[i] << " billetes" << endl;
+        for (int i = 11; i > 7 ; i--) {
+            cout << "Bs" << denominaciones[i] << ": " << cantidadBilletes[i] << " Centavos" << endl;
+        }
+        for (int i = 7; i > 4 ; i--) {
+            cout << "Bs" << denominaciones[i] << ": " << cantidadBilletes[i] << " Monedas" << endl;
+        }
+          for (int i = 4; i >= 0 ; i--) {
+            cout << "Bs" << denominaciones[i] << ": " << cantidadBilletes[i] << " Billetes" << endl;
         }
     }
+
     
     
     int getDenominacion(int i) const {
@@ -238,16 +247,21 @@ int main() {
                     break;
                 case 2: {
                     int opcionRetiro;
-                    int montoRetiro;
-                    int billetesAEntregar[5];
+                    double montoRetiro;
+                    int billetesAEntregar[12];
 
                     while (true) {
                           system("cls");
                           cout << "Opciones de retiro:" << endl;
-                          cout << "     1 - Bs10    4 - Bs100" << endl;
-                          cout << "     2 - Bs20    5 - Bs200" << endl;
-                          cout << "     3 - Bs50    6 - Cancelar Transaccion" << endl;
-                          cout << "Elija una opcion de retiro (1 a 6): ";
+                          cout << "     1 - Bs0.01    6 - Bs2" << endl;
+                          cout << "     2 - Bs0.1     7 - Bs5" << endl;
+                          cout << "     3 - Bs0.2     8 - Bs10" << endl;
+                          cout << "     4 - Bs0.5     9 - Bs20" << endl;
+                          cout << "     5 - Bs1       10 - Bs50" << endl;
+                          cout << "     4 - Bs0.5     11 - Bs100" << endl;
+                          cout << "     5 - Bs1       12 - Bs200" << endl;
+                          cout << "                   13  - Cancelar Transaccion" << endl;
+                          cout << "Elija una opcion de retiro (1 a 13): ";
                           cin >> opcionRetiro;
         
                    if (cin.fail()) {
@@ -261,7 +275,7 @@ int main() {
 
 
                       // Validar opcion
-                    if (opcionRetiro < 1 || opcionRetiro > 6) {
+                    if (opcionRetiro < 1 || opcionRetiro > 13) {
                         cout << "\nOpcion invalida. Intente de nuevo." << endl;
                         cout << "Presione ENTER para continuar...";
                         cin.ignore();
@@ -269,7 +283,7 @@ int main() {
                         continue; // vuelve al menu de retiro
                         }
 
-                     if (opcionRetiro == 6) {
+                     if (opcionRetiro == 13) {
                          system("cls");
                          cout << "Transaccion cancelada." << endl;
                          cout << "Presione ENTER para continuar...";
@@ -280,11 +294,18 @@ int main() {
 
                         // Determinar el monto según la opcion
                         switch (opcionRetiro) {
-                        case 1: montoRetiro = 10; break;
-                        case 2: montoRetiro = 20; break;
-                        case 3: montoRetiro = 50; break;
-                        case 4: montoRetiro = 100; break;
-                        case 5: montoRetiro = 200; break;
+                        case 1: montoRetiro = 0.01; break;
+                        case 2: montoRetiro = 0.1; break;
+                        case 3: montoRetiro = 0.2; break;
+                        case 4: montoRetiro = 0.5; break;
+                        case 5: montoRetiro = 1; break;
+                        case 6: montoRetiro = 2; break;
+                        case 7: montoRetiro = 5; break;
+                        case 8: montoRetiro = 10; break;
+                        case 9: montoRetiro = 20; break;
+                        case 10: montoRetiro = 50; break;
+                        case 11: montoRetiro = 100; break;
+                        case 12: montoRetiro = 200; break;
                         }
 
                         // Verificar saldo
@@ -314,10 +335,14 @@ int main() {
 
                       system("cls");
                       cout << "\nPor favor tome su dinero: " << endl;
-                      for (int i = 0; i < 5; i++) {
-                      if (billetesAEntregar[i] > 0) {
+                      for (int i = 0; i < 12; i++) {
+                      if (billetesAEntregar[i] > 5) {
                       cout << "Bs" << dispensador.getDenominacion(i) << " x " << billetesAEntregar[i] << " billetes" << endl;
                        }
+                       if (billetesAEntregar[i] < 10 && billetesAEntregar[i] >= 1) {
+                      cout << "Bs" << dispensador.getDenominacion(i) << " x " << billetesAEntregar[i] << " Monedas" << endl;
+                       }
+                       
                       }
 
                       cout << "Su nuevo saldo es: Bs" << cuenta->obtenerSaldo() << endl << endl;
