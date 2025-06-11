@@ -10,6 +10,7 @@ private:
     int numeroCuenta;
     int nip;
     double saldo;
+    double saldoPendiente;
 
 public:
     // Constructor 
@@ -17,6 +18,7 @@ public:
         numeroCuenta = cuentaIngresada;
         nip = nipIngresado;
         saldo = saldoInicial;
+        saldoPendiente = 0.0;
     }
 
     int obtenerNumeroCuenta() const { return numeroCuenta; }
@@ -26,11 +28,24 @@ public:
     }
 
     double obtenerSaldo() const { return saldo; }
+    double obtenerSaldoPendiente() const { return saldoPendiente; }
+    
+    double obtenerSaldoTotal() const { return saldo + saldoPendiente; }
     
     bool retirar(double monto) {
     if (monto > saldo) return false;
     saldo -= monto;
     return true;
+    }
+    
+    
+     void depositarPendiente(double monto) {
+        saldoPendiente += monto;
+    }
+    
+    void verificarDeposito() {
+        saldo += saldoPendiente;
+        saldoPendiente = 0.0;
     }
 
 };
@@ -126,7 +141,7 @@ public:
 };
 
 
-// Función principal
+// Funcion principal
 int main() {
    BaseDatosBanco baseDatos;
    DispensadorEfectivo dispensador;
@@ -138,28 +153,53 @@ int main() {
     Cuenta* cuenta = nullptr;
 
     while (cuenta == nullptr) {
-        system("cls"); // Limpia pantalla antes de mostrar el menú de nuevo
+        system("cls"); // Limpia pantalla antes de mostrar el menu de nuevo
 
-        cout << "=== Bienvenido al Cajero Automatico ===" << endl;
+        cout << "Bienvenido!" << endl << endl;
         cout << "Ingrese su numero de cuenta: ";
         cin >> cuentaIngresada;
         
+        if (cin.fail()) {
+           cin.clear();
+           cin.ignore(10000, '\n');
+           cout << "\nEntrada invalida. Por favor ingrese un numeros, no letras." << endl;
+           cout << "Presione ENTER para continuar...";
+           cin.get();
+           continue; // vuelve a mostrar el menu de inicio
+           }
+        
          if (cuentaIngresada == -1) {
                 cout << "\nCerrando el cajero automatico..." << endl;
-                return 0; // Finaliza el programa
+                return 0; // Finalizar el programa
             }
+            
+            
+        cout<<endl;
 
         cout << "Ingrese su NIP: ";
         cin >> nipIngresado;
+        
+       
 
         cuenta = baseDatos.autenticarUsuario(cuentaIngresada, nipIngresado);
 
         if (cuenta == nullptr) {
             cout << "Numero de cuenta o NIP incorrecto." << endl;
             cout << "Presione ENTER para intentar de nuevo...";
-            cin.ignore(); // limpiar buffer
-            cin.get();    // esperar ENTER
+            cin.ignore(); // limpiara buffer
+            cin.get();    // esperar a que se presione ENTER
         }
+        
+        cout<<endl;
+        
+         if (cin.fail()) {
+           cin.clear();
+           cin.ignore(10000, '\n');
+           cout << "\nEntrada invalida. Por favor ingrese un numeros, no letras." << endl;
+           cout << "Presione ENTER para continuar...";
+           cin.get();
+           continue; // vuelve a mostrar el menu de inicio
+           }
     }
     
     
@@ -173,104 +213,154 @@ int main() {
             cout << "     4 - Salir" << endl;
             cout << "Escriba una opcion: ";
             cin >> opcion;
+            
+            
+            //Volver a correr el codigo en caso de ingresar una letra en cin<<option
+            if (cin.fail()) {
+           cin.clear();
+           cin.ignore(10000, '\n');
+           cout << "\nEntrada invalida. Por favor ingrese un numero del 1 al 4." << endl;
+           cout << "Presione ENTER para continuar...";
+           cin.get();
+           continue; // vuelve a mostrar el menu principal
+}
 
             switch (opcion) {
                 case 1:
                 	system("cls");
-                    cout << "\nSu saldo actual es: Bs" << cuenta->obtenerSaldo() << endl << endl;
+                    cout << "\nSu saldo disponible es: Bs" << cuenta->obtenerSaldo() << endl << endl;
+                    cout << "Saldo pendiente por verificar: Bs" << cuenta->obtenerSaldoPendiente() << endl<<endl;
+                    cout << "Saldo total: Bs" << cuenta->obtenerSaldoTotal() << endl << endl;
+
                     cout << "Presione ENTER para continuar...";
                     cin.ignore();
                     cin.get();
                     break;
-                case 2:{
-                    system("cls");
+                case 2: {
                     int opcionRetiro;
-                    int montoRetiro = 0;
+                    int montoRetiro;
                     int billetesAEntregar[5];
 
+                    while (true) {
+                          system("cls");
+                          cout << "Opciones de retiro:" << endl;
+                          cout << "     1 - Bs10    4 - Bs100" << endl;
+                          cout << "     2 - Bs20    5 - Bs200" << endl;
+                          cout << "     3 - Bs50    6 - Cancelar Transaccion" << endl;
+                          cout << "Elija una opcion de retiro (1 a 6): ";
+                          cin >> opcionRetiro;
+        
+                   if (cin.fail()) {
+                      cin.clear(); // limpia el estado de error
+                      cin.ignore(10000, '\n'); // limpia todo el buffer de entrada
+                      cout << "\nEntrada invalida. Por favor ingrese un numero entre 1 y 6." << endl;
+                      cout << "Presione ENTER para continuar...";
+                      cin.get(); // espera que se presione ENTER correctamente
+                      continue; // vuelve al menu de retiro
+                      }
 
-                    cout << "Opciones de retiro:" << endl;
-                    cout << "     1 - Bs10    4 - Bs100" << endl;
-                    cout << "     2 - Bs20    5 - Bs200" << endl;
-                    cout << "     3 - Bs50    6 - Cancelar Transaccion" << endl;
-                    cout << "Elija una opcion de retiro (1 a 6): ";
-                    cin >> opcionRetiro;
 
-                    switch (opcionRetiro) {
-                    case 1: montoRetiro = 10; break;
-                    case 2: montoRetiro = 20; break;
-                    case 3: montoRetiro = 50; break;
-                    case 4: montoRetiro = 100; break;
-                    case 5: montoRetiro = 200; break;
-                    case 6:
-                    system("cls");
-                    cout << "Transaccion cancelada." << endl;
-                    cout << "Presione ENTER para continuar...";
-                    cin.ignore();
-                    cin.get();
-                    break;
-                    default:
-                    system("cls");
-                    cout << "Opcion invalida. Intente de nuevo." << endl;
-                    cout << "Presione ENTER para continuar...";
-                    cin.ignore();
-                    cin.get();
-                    break;
-                    }
+                      // Validar opcion
+                    if (opcionRetiro < 1 || opcionRetiro > 6) {
+                        cout << "\nOpcion invalida. Intente de nuevo." << endl;
+                        cout << "Presione ENTER para continuar...";
+                        cin.ignore();
+                        cin.get();
+                        continue; // vuelve al menu de retiro
+                        }
 
-                    if (opcionRetiro >= 1 && opcionRetiro <= 5) {
-                    if (montoRetiro > cuenta->obtenerSaldo()) {
-                    system("cls");
-                    cout << "Saldo insuficiente. Su saldo actual es: Bs" << cuenta->obtenerSaldo() << endl;
-                    cout << "Presione ENTER para seleccionar un monto menor...";
-                    cin.ignore();
-                    cin.get();
-                    continue;
-                    }
+                     if (opcionRetiro == 6) {
+                         system("cls");
+                         cout << "Transaccion cancelada." << endl;
+                         cout << "Presione ENTER para continuar...";
+                         cin.ignore();
+                         cin.get();
+                         break; // sale del menu de retiro al menu principal
+                        }
 
-                    if (!dispensador.puedeDispensar(montoRetiro, billetesAEntregar)) {
-                    system("cls");
-                    cout << "El cajero no puede dispensar el monto solicitado con los billetes disponibles." << endl;
-                    dispensador.mostrarEstado();
-                    cout << "Presione ENTER para seleccionar un monto diferente...";
-                    cin.ignore();
-                    cin.get();
-                    continue;
-                    }
+                        // Determinar el monto según la opcion
+                        switch (opcionRetiro) {
+                        case 1: montoRetiro = 10; break;
+                        case 2: montoRetiro = 20; break;
+                        case 3: montoRetiro = 50; break;
+                        case 4: montoRetiro = 100; break;
+                        case 5: montoRetiro = 200; break;
+                        }
 
-                    cuenta->retirar(montoRetiro);
-                    dispensador.dispensar(billetesAEntregar);
-                    
-                    system("cls");
-                    cout << "\nPor favor tome su dinero: " << endl;
-                    for (int i = 0; i < 5; i++) {
+                        // Verificar saldo
+                        if (montoRetiro > cuenta->obtenerSaldo()) {
+                        system("cls");
+                        cout << "Saldo insuficiente. Su saldo actual es: Bs" << cuenta->obtenerSaldo() << endl;
+                        cout << "Presione ENTER para seleccionar un monto menor...";
+                        cin.ignore();
+                        cin.get();
+                        continue;
+                        }
+
+                       // Verificar billetes disponibles
+                      if (!dispensador.puedeDispensar(montoRetiro, billetesAEntregar)) {
+                      system("cls");
+                      cout << "El cajero no puede dispensar el monto solicitado con los billetes disponibles." << endl;
+                      dispensador.mostrarEstado();
+                      cout << "Presione ENTER para seleccionar un monto diferente...";
+                      cin.ignore();
+                      cin.get();
+                      continue;
+                      }
+
+                      // Realizar el retiro
+                      cuenta->retirar(montoRetiro);
+                      dispensador.dispensar(billetesAEntregar);
+
+                      system("cls");
+                      cout << "\nPor favor tome su dinero: " << endl;
+                      for (int i = 0; i < 5; i++) {
                       if (billetesAEntregar[i] > 0) {
-                          cout << "Bs" << dispensador.getDenominacion(i) << " x " << billetesAEntregar[i] << " billetes" << endl;
+                      cout << "Bs" << dispensador.getDenominacion(i) << " x " << billetesAEntregar[i] << " billetes" << endl;
                        }
-                    }
+                      }
 
-                    cout << "Su nuevo saldo es: Bs" << cuenta->obtenerSaldo() << endl << endl;
-                    dispensador.mostrarEstado();
+                      cout << "Su nuevo saldo es: Bs" << cuenta->obtenerSaldo() << endl << endl;
+                      dispensador.mostrarEstado();
 
-                    cout << endl;
-                    cout << "Presione ENTER para continuar...";
-                    cin.ignore();
-                    cin.get();
-                    }
+                      cout << endl;
+                      cout << "Presione ENTER para continuar...";
+                      cin.ignore();
+                      cin.get();
 
-  
+                      break; // salir del ciclo despues de retiro exitoso
+                     }
 
-                    break;
-                    }
+                     break;
+                }
+
                     
                 case 3: {
-                	system("cls");
+                	//system("cls");
                    int montoCentavos;
-
+                   
+                   while(true){
+				   
+				   
+                   system("cls");
                    cout << "\nIngrese el monto que desea depositar (en centavos, ej: 125 = Bs1.25), o 0 para cancelar: ";
                    cin >> montoCentavos;
+                   
+                   if (montoCentavos < 0) {
+                   system("cls");
+                   cout<<endl;
+                   cout << "No se puede ingresar una cantidad negativa de dinero.\n"<<endl<<endl;
+                   cout << "Presione ENTER para continuar...";
+                   cin.ignore();
+                   cin.get(); // espera que se presione ENTER correctamente
+                   continue; // vuelve al menu de deposito
+                   }
+                   
+                   
 
                 if (montoCentavos == 0) {
+                   system("cls");
+                   cout<<endl;
                    cout << "Transaccion cancelada." << endl<<endl;
                    cout << "Presione ENTER para continuar...";
                    cin.ignore();
@@ -280,8 +370,11 @@ int main() {
 
                 // Convertir a Bs
                 double montoBs = montoCentavos / 100.0;
+                
+                cuenta->depositarPendiente(montoBs);
 
-                cout << "\nDeposito exitoso. Se han depositado Bs" << montoBs << " en su cuenta." <<endl<<endl;
+                system("cls");
+                cout << "\nDeposito exitoso. Se han depositado Bs" << montoBs << " (pendiente por verificar)." <<endl<<endl;
                 cout << "Este dinero no esta disponible de inmediato para retirarse."<<endl; 
                 cout<<"El banco debe verificar fisicamente el monto del efectivo depositado" <<endl<<endl;
                 cin.ignore();
@@ -290,6 +383,8 @@ int main() {
 
                 break;
             }
+            break;
+        }
                     
                 case 4:
                 	system("cls");
