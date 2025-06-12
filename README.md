@@ -137,8 +137,6 @@ El sistema utiliza una **máquina de estados** para gestionar las transiciones e
 ```
 ## Instalación
 
-### En **Arch Linux**:
-
 1. **Instalar Allegro:**
 
    En **Arch Linux**:
