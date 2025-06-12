@@ -43,3 +43,57 @@ public:
     void depositarPendiente(double monto);
     void verificarDeposito();
 };
+```
+
+### 2. **Clase BD (Base de Datos)**
+
+La clase `BD` simula la base de datos que almacena las cuentas de los usuarios. Permite autenticar usuarios y administrar la lista de cuentas.
+
+#### Métodos:
+- **`autenticarUsuario(int cuenta, int nip)`**: Verifica si el número de cuenta y el NIP corresponden a un usuario válido.
+
+```cpp
+class BD {
+private:
+    Cuenta** listaCuentas;
+
+public:
+    BD();
+    Cuenta* autenticarUsuario(int cuenta, int nip);
+    ~BD();
+};
+
+```
+### 3. **Clase CajeroAutomatico**
+
+La clase `CajeroAutomatico` gestiona la interacción con el usuario a través de una interfaz gráfica, utilizando la biblioteca **Allegro**. Permite realizar operaciones como consultas de saldo, depósitos y retiros.
+
+#### Métodos:
+- **`Iniciar()`**: Inicia el cajero y controla el flujo de las transacciones.
+- **`DibujarPantalla()`**: Dibuja la interfaz gráfica del cajero.
+- **`CrearBotones()`**: Crea los botones interactivos para la interfaz.
+- **`ProcesarEntrada(int x, int y)`**: Procesa la entrada del usuario basada en las coordenadas del clic.
+
+```cpp
+class CajeroAutomatico {
+public:
+    CajeroAutomatico();
+    ~CajeroAutomatico();
+    void Iniciar();
+
+private:
+    ALLEGRO_DISPLAY* display;
+    ALLEGRO_FONT* font;
+    ALLEGRO_EVENT_QUEUE* event_queue;
+    ALLEGRO_TIMER* timer;
+    Estado estadoActual;
+    string inputActual;
+    BD bd;
+    int numeroCuenta;
+    Cuenta* Token;
+
+    void DibujarPantalla();
+    void CrearBotones();
+    void ProcesarEntrada(int x, int y);
+};
+```
