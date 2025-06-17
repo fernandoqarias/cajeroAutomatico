@@ -62,7 +62,7 @@ Realiza tus cambios con un commit y realiza tu push.
 Abre un pull request describiendo tu cambio gracias!.
 
 ## Imagen de la Interfaz
-
+![Imagen](https://media.discordapp.net/attachments/1371708428753440820/1384463412385550358/Shot-2025-06-17-052249.png?ex=68528587&is=68513407&hm=fb0d7868c94f25182a695fa141e9bfdbe27f749cb324ce5454682e879f13e609&=&format=webp&quality=lossless&width=1132&height=796)
 ## Autores
 Oscar Santiago Abuawad Velasco - oscar.abuawad@ucb.edu.bo
 
