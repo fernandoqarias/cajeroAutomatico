@@ -42,6 +42,7 @@ class SistemaBanco {
     double Ingresos(int numCuenta);
     double Egresos(int numCuenta);
     void Depositar(int numCuenta,double montoIngresado);
+    void mostrarSaldo(int numCuenta, ALLEGRO_FONT* font, ALLEGRO_DISPLAY* display);
 };
 
 void SistemaBanco::registrarCliente(int numeroCuenta,int nip,double saldo,double ingreso,double egreso) {
@@ -82,6 +83,26 @@ bool SistemaBanco::verificarNip(int numCuenta,int n) {
         archivo.close();
     }
     return false;
+}
+
+void SistemaBanco::mostrarSaldo(int numCuenta, ALLEGRO_FONT* font, ALLEGRO_DISPLAY* display) {
+    string nombre_archivo = to_string(numCuenta);
+    ifstream archivo(nombre_archivo);
+
+    if (!archivo.is_open()) {
+        cout << "No se pudo abrir el archivo de la cuenta." << endl;
+        return;
+    }
+
+    string linea;
+    getline(archivo, linea); 
+    getline(archivo, linea);
+    getline(archivo, linea); 
+
+    double saldo = stod(linea);
+    al_draw_textf(font, al_map_rgb(0, 0, 0), 320, 70, ALLEGRO_ALIGN_CENTER, "Saldo actual: %.2f Bs", saldo);
+
+    archivo.close();
 }
 
 double SistemaBanco::obtenerSaldo(int numCuenta) {
@@ -437,6 +458,7 @@ void CajeroAutomatico::DibujarPantalla() {
         al_draw_text(font, al_map_rgb(0, 0, 0), 320, 70, ALLEGRO_ALIGN_CENTER, "Ingrese su NIP:");
     } else if (estadoActual == MOSTRANDO_OPCIONES) {
         al_draw_text(font, al_map_rgb(0, 0, 0), 320, 50, ALLEGRO_ALIGN_CENTER, "1. Depositar | 2. Retirar | 3. Movimientos");
+        sistema.mostrarSaldo(numeroCuenta, font, display);
     } else if (estadoActual == ESPERANDO_MONTO_DEPOSITO) {
         al_draw_text(font, al_map_rgb(0, 0, 0), 320, 50, ALLEGRO_ALIGN_CENTER, "Por favor,ingrese el monto que desea depositar");
     } else if (estadoActual == ESPERANDO_MONTO_RETIRO) {
