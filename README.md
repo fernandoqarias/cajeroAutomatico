@@ -33,7 +33,7 @@ El sistema también incluye funcionalidades como la creación de cuentas y valid
   Puedes descargar esta version para windows en este [link](https://liballeg-org.translate.goog/download.html?_x_tr_sl=en&_x_tr_tl=es&_x_tr_hl=es&_x_tr_pto=tc)<br>
 
 3. Compilar Proyecto
-   Si tienes un entorno como g++(https://www.fdi.ucm.es/profesor/luis/fp/devtools/mingw.html)
+   Si tienes un entorno como [g++](https://www.fdi.ucm.es/profesor/luis/fp/devtools/mingw.html)
    ```bash
    g++ -o atm atm.cpp -lallegro -lallegro_primitives -lallegro_font
    ./atm
