@@ -14,9 +14,9 @@ El sistema también incluye funcionalidades como la creación de cuentas y valid
 
 ## Tecnologías Utilizadas
 - **Lenguaje:** C++
-- **Librerías:** Allegro 5(https://liballeg-org.translate.goog/download.html?_x_tr_sl=en&_x_tr_tl=es&_x_tr_hl=es&_x_tr_pto=tc)
+- **Librerías:** [Allegro 5](https://liballeg-org.translate.goog/index.html?_x_tr_sl=en&_x_tr_tl=es&_x_tr_hl=es&_x_tr_pto=tc)
 - **Paradigma:** Orientación a Objetos
-- **Archivos de Datos:** Archivos de texto para almacenar la información de las cuentas bancarias.
+- **Archivos de Datos:** Archivos de texto para almacenar la información de las cuentas bancarias [fstream](https://cplusplus-com.translate.goog/reference/fstream/fstream/?_x_tr_sl=en&_x_tr_tl=es&_x_tr_hl=es&_x_tr_pto=tc).
 
 ## Instalación
 
@@ -27,10 +27,10 @@ El sistema también incluye funcionalidades como la creación de cuentas y valid
 2. Instalar Allegro 5
    Asegurate de tener Allegro 5 instalado en tu maquina version utilizada
    en este proyecto.
-   Para este proyecto usamos la ultima version de los repositorios de archlinux(https://wiki.archlinux.org/title/Allegro)
-  Name            : allegro
-  Version         : 5.2.10.1-4
-  Puedes descargar esta version para windows en este link(https://liballeg-org.translate.goog/download.html?_x_tr_sl=en&_x_tr_tl=es&_x_tr_hl=es&_x_tr_pto=tc)
+   Para este proyecto usamos la ultima version de los repositorios de [archlinux](https://wiki.archlinux.org/title/Allegro)<br>
+  Name            : allegro<br>
+  Version         : 5.2.10.1-4<br>
+  Puedes descargar esta version para windows en este [link](https://liballeg-org.translate.goog/download.html?_x_tr_sl=en&_x_tr_tl=es&_x_tr_hl=es&_x_tr_pto=tc)<br>
 
 3. Compilar Proyecto
    Si tienes un entorno como g++(https://www.fdi.ucm.es/profesor/luis/fp/devtools/mingw.html)
@@ -42,16 +42,16 @@ El sistema también incluye funcionalidades como la creación de cuentas y valid
 Al iniciar el programa, el sistema pedirá que ingreses tu número de cuenta.
 Luego, debes ingresar tu NIP para acceder a las funcionalidades del cajero.
 Una vez autenticado, podrás elegir entre consultar tu saldo, retirar dinero o realizar un depósito.
-Flujo de operaciones:
+Flujo de operaciones<br>
 Inicio: Solicita número de cuenta y NIP.
 Menú Principal: Permite elegir entre consultar saldo, retirar dinero, hacer un depósito o salir.
 Retiro: Elige un monto predefinido o ingresa uno manualmente.
 Depósito: Ingresa la cantidad que deseas depositar.
 
-Consulta de Saldo
+### Consulta de Saldo<br>
 Después de ingresar tu número de cuenta y NIP, puedes consultar tu saldo actual en el ATM.
 
-Retiro de Efectivo
+### Retiro de Efectivo<br>
 El cajero mostrará las opciones de retiro, como $20, $50, $100, etc. Si el saldo es suficiente, el monto será retirado y actualizado en la base de datos del sistema.
 
 ## Contribución
