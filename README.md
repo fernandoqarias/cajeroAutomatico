@@ -22,7 +22,7 @@ El sistema también incluye funcionalidades como la creación de cuentas y valid
 
 1. **Clonar el repositorio:**
    ```bash
-   git clone https://github.com/
+   git clone https://github.com/fernandoqarias/cajeroAutomatico/atm.cpp
    ```
 2. Instalar Allegro 5
    Asegurate de tener Allegro 5 instalado en tu maquina version utilizada
