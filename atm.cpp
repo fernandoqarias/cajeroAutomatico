@@ -6,7 +6,6 @@
 #include <fstream>
 #include <cctype>
 #include <cmath>
-#include <cmath>
 
 using namespace std;
 
@@ -14,7 +13,6 @@ enum Estado {
     ESPERANDO_USUARIO,
     CREAR_CUENTA_ESPERAR_NUMERO_CUENTA,
     CREAR_CUENTA_ESPERAR_NIP,
-    NO_EXISTE_EL_NIP,
     CREAR_CUENTA_SALDO,
     CREAR_CUENTA,
     CUENTA_CREADA_EXITO,
@@ -242,61 +240,44 @@ public:
     void aceptarDeposito(double monto);
 };
 
-// redondear el monto a dos decimales
-double redondearMonto(double monto) {
-    return round(monto * 10.0) / 10.0;
-}
-
-// retirar el monto solicitado
 bool Dispensador::retirarMonto(double monto) {
-    monto = redondearMonto(monto);
-
+    monto = round(monto * 100.0) / 100.0;
     double montoRestante = monto;
-    int cantidadRetiro;
-    int corteBillete;
 
     int cortesTemporales[11] = {0};
 
-    cout << "Intentando cubrir el monto: " << montoRestante << " Bs" << endl;
-
     for (int i = 0; i < 11; i++) {
-        corteBillete = i;
-
-        if (montoRestante >= denominaciones[corteBillete]) {
-            cantidadRetiro = floor(montoRestante / denominaciones[corteBillete]);
-
-            if (cantidadRetiro > cantidadBilletes[corteBillete]) {
-                cantidadRetiro = cantidadBilletes[corteBillete];
+        if (montoRestante >= denominaciones[i]) {
+            int cantidad = static_cast<int>(montoRestante / denominaciones[i]);
+            if (cantidad > cantidadBilletes[i]) {
+                cantidad = cantidadBilletes[i];
             }
-
-            montoRestante -= cantidadRetiro * denominaciones[corteBillete];
-            montoRestante = redondearMonto(montoRestante);
-            cortesTemporales[corteBillete] = cantidadRetiro;
-            cout << "Retirando " << cantidadRetiro << " billete(s)/moneda(s) de " << denominaciones[corteBillete] << " Bs" << endl;
+            cortesTemporales[i] = cantidad;
+            montoRestante -= cantidad * denominaciones[i];
+            montoRestante = round(montoRestante * 100.0) / 100.0;
         }
     }
 
-    montoRestante = redondearMonto(montoRestante);
-    if (montoRestante > 0) {
-        cout << "Monto no cubierto por los billetes y monedas disponibles." << endl;
+    if (montoRestante > 0.001) {
+        cout << "No se puede cubrir el monto exacto. Falta: " << montoRestante << " Bs" << endl;
         return false;
     }
-
     for (int i = 0; i < 11; i++) {
-        if (cortesTemporales[i] > 0) {
-            cantidadBilletes[i] -= cortesTemporales[i];
-            cortesEntregados[i] += cortesTemporales[i];
-        }
+        cortesEntregados[i] = 0;
     }
-
-    return true; 
+    for (int i = 0; i < 11; i++) {
+        cantidadBilletes[i] -= cortesTemporales[i];
+        cortesEntregados[i] += cortesTemporales[i];
+    }
+    return true;
 }
+
 
 void Dispensador::aceptarDeposito(double monto) {
     int cantidadDeposito;
     double montoRestante = monto;
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 11; i++) {
         if (montoRestante >= denominaciones[i]) {
             cantidadDeposito = montoRestante / denominaciones[i];
             montoRestante -= cantidadDeposito * denominaciones[i];
@@ -310,7 +291,7 @@ void Dispensador::aceptarDeposito(double monto) {
 }
 
 void Dispensador::mostrarCortes(ALLEGRO_FONT* font, int x, int y) {
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 11; i++) {
         if (cortesEntregados[i] > 0) {
             al_draw_textf(font, al_map_rgb(0, 0, 0), x, y + (i * 10), ALLEGRO_ALIGN_LEFT, 
                           "%d cortes de %.2f Bs", cortesEntregados[i], denominaciones[i]);
@@ -325,23 +306,20 @@ public:
     void Iniciar();
 
 private:
+    //allegro
     ALLEGRO_DISPLAY* display;
     ALLEGRO_FONT* font;
     ALLEGRO_EVENT_QUEUE* event_queue;
     ALLEGRO_TIMER* timer;
-
     //Manejo de estados y entradas
     Estado estadoActual;
     string inputActual;
-
     // Allegro Logica
     void DibujarPantalla();
     void CrearBotones();
     void ProcesarEntrada(int x, int y);
     void DibujarDispensador();
-    void MostrarMontosRetirados();
     void DibujarRanura();
-    void DibujarCortes();
     //Sistema
     SistemaBanco sistema;
     //Dispensador
@@ -350,18 +328,14 @@ private:
     string nuevo_numeroCuenta;
     string nuevo_nip;
     double saldo_inicial;
-
     //Variables para iniciar sesion
     int numeroCuenta;
     int inicio_nip;
     double saldo_pantalla;
-
     //varialble retirar
     int montoRetirar;
-
     //cortes
     int cortes[10];
-
 };
 
 CajeroAutomatico::CajeroAutomatico()
@@ -544,31 +518,11 @@ void CajeroAutomatico::DibujarDispensador() {
 
     al_draw_text(font, al_map_rgb(0, 0, 0), xStart + width / 2, yStart - 20, ALLEGRO_ALIGN_CENTER, "Dispensador");
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 11  ; i++) {
         al_draw_textf(font, al_map_rgb(0, 0, 0), xStart + 10, yStart + (i + 1) * 40, ALLEGRO_ALIGN_LEFT, "%.2f Bs: %d", dispensador.denominaciones[i], dispensador.cantidadBilletes[i]);
     }
 }
 
-
-void CajeroAutomatico::DibujarCortes() {
-    int btnSize = 60;
-    int gap = 10;
-    int xStart = 500;
-    int yStart = 500;
-
-    int width = (btnSize + gap) * 3;
-    int height = (btnSize + gap) * 4;
-
-    int corteX = xStart + 10;
-    int corteY = yStart + 10; 
-
-    for (int i = 0; i < 10; i++) {
-        if (dispensador.cantidadBilletes[i] > 0) {
-            al_draw_textf(font, al_map_rgb(0, 0, 0), corteX, corteY + i * 30, ALLEGRO_ALIGN_LEFT, 
-                          "Billetes de %.2f Bs: %d", dispensador.denominaciones[i], dispensador.cantidadBilletes[i]);
-        }
-    }
-}
 
 void CajeroAutomatico::DibujarRanura() {
     int btnSize = 60;
