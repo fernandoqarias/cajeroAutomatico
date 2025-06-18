@@ -4,7 +4,6 @@
 #include <iostream>
 #include <string> 
 #include <fstream>
-#include <cctype>
 #include <cmath>
 
 using namespace std;
@@ -32,21 +31,21 @@ class SistemaBanco {
     public:
     SistemaBanco() {}
     public:
-    void registrarCliente(int numeroCuenta,int nip,double saldo,double ingreso,double egreso);
+    void registrarCliente(int numeroCuenta,int nip,float saldo,float ingreso,float egreso);
     bool verificarNip(int numCuenta,int n);
-    double obtenerSaldo(int numCuenta);
+    float obtenerSaldo(int numCuenta);
     bool existeCuenta(int numCuenta);
-    void Retirar(int numCuenta,double montoRetiro);
-    double Ingresos(int numCuenta);
-    double Egresos(int numCuenta);
-    void Depositar(int numCuenta,double montoIngresado);
+    void Retirar(int numCuenta,float montoRetiro);
+    float Ingresos(int numCuenta);
+    float Egresos(int numCuenta);
+    void Depositar(int numCuenta,float montoIngresado);
     void mostrarSaldo(int numCuenta, ALLEGRO_FONT* font, ALLEGRO_DISPLAY* display);
     ~SistemaBanco() {
         cout << endl;
     }
 };
 
-void SistemaBanco::registrarCliente(int numeroCuenta,int nip,double saldo,double ingreso,double egreso) {
+void SistemaBanco::registrarCliente(int numeroCuenta,int nip,float saldo,float ingreso,float egreso) {
     string nombre_archivo = to_string(numeroCuenta);
     ofstream archivo(nombre_archivo);
     if(archivo.is_open()) {
@@ -100,13 +99,13 @@ void SistemaBanco::mostrarSaldo(int numCuenta, ALLEGRO_FONT* font, ALLEGRO_DISPL
     getline(archivo, linea);
     getline(archivo, linea); 
 
-    double saldo = stod(linea);
+    float saldo = stof(linea);
     al_draw_textf(font, al_map_rgb(0, 0, 0), 320, 70, ALLEGRO_ALIGN_CENTER, "Saldo actual: %.2f Bs", saldo);
 
     archivo.close();
 }
 
-double SistemaBanco::obtenerSaldo(int numCuenta) {
+float SistemaBanco::obtenerSaldo(int numCuenta) {
     string nombre_archivo = to_string(numCuenta);
     ifstream archivo(nombre_archivo);
     if(archivo.is_open()) {
@@ -114,13 +113,13 @@ double SistemaBanco::obtenerSaldo(int numCuenta) {
         getline(archivo,linea);
         getline(archivo,linea);
         if(getline(archivo,linea)) {
-            return stod(linea);
+            return stof(linea);
         }
     }
     return 0.0;
 }
 
-void SistemaBanco::Retirar(int numCuenta,double montoRetiro) {
+void SistemaBanco::Retirar(int numCuenta,float montoRetiro) {
     string nombre_archivo = to_string(numCuenta);
     ifstream archivo(nombre_archivo);
     if(!archivo.is_open()) {
@@ -129,12 +128,12 @@ void SistemaBanco::Retirar(int numCuenta,double montoRetiro) {
     }
     string linea;
     int numeroCuenta,nip;
-    double saldo,ingreso,egreso;
+    float saldo,ingreso,egreso;
     getline(archivo,linea); numeroCuenta = stoi(linea);
     getline(archivo, linea); nip = stoi(linea);
-    getline(archivo, linea); saldo = stod(linea);
-    getline(archivo, linea); ingreso = stod(linea);
-    getline(archivo, linea); egreso = stod(linea);
+    getline(archivo, linea); saldo = stof(linea);
+    getline(archivo, linea); ingreso = stof(linea);
+    getline(archivo, linea); egreso = stof(linea);
 
     if(montoRetiro > saldo) {
         archivo.close();
@@ -160,7 +159,7 @@ void SistemaBanco::Retirar(int numCuenta,double montoRetiro) {
     archivoSalida.close();
 }
 
-void SistemaBanco::Depositar(int numCuenta,double montoIngresado) {
+void SistemaBanco::Depositar(int numCuenta,float montoIngresado) {
     string nombre_archivo = to_string(numCuenta);
     ifstream archivo(nombre_archivo);
 
@@ -169,12 +168,12 @@ void SistemaBanco::Depositar(int numCuenta,double montoIngresado) {
     }
     string linea;
     int numeroCuenta,nip;
-    double saldo,ingreso,egreso;
+    float saldo,ingreso,egreso;
     getline(archivo,linea); numeroCuenta = stoi(linea);
     getline(archivo, linea); nip = stoi(linea);
-    getline(archivo, linea); saldo = stod(linea);
-    getline(archivo, linea); ingreso = stod(linea);
-    getline(archivo, linea); egreso = stod(linea);
+    getline(archivo, linea); saldo = stof(linea);
+    getline(archivo, linea); ingreso = stof(linea);
+    getline(archivo, linea); egreso = stof(linea);
 
     saldo += montoIngresado;
     ingreso += montoIngresado;
@@ -195,7 +194,7 @@ void SistemaBanco::Depositar(int numCuenta,double montoIngresado) {
     archivoSalida.close();
 }
 
-double SistemaBanco::Ingresos(int numCuenta) {
+float SistemaBanco::Ingresos(int numCuenta) {
     string nombre_archivo = to_string(numCuenta);
     ifstream archivo(nombre_archivo);
     if(!archivo.is_open()) {
@@ -208,12 +207,12 @@ double SistemaBanco::Ingresos(int numCuenta) {
     getline(archivo,linea);
     getline(archivo,linea);
 
-    double ingreso = stod(linea);
+    float ingreso = stof(linea);
     archivo.close();
     return ingreso;
 }
 
-double SistemaBanco::Egresos(int numCuenta) {
+float SistemaBanco::Egresos(int numCuenta) {
     string nombre_archivo = to_string(numCuenta);
     ifstream archivo(nombre_archivo);
     if(!archivo.is_open()) {
@@ -227,14 +226,14 @@ double SistemaBanco::Egresos(int numCuenta) {
     getline(archivo,linea);
     getline(archivo,linea);
 
-    double egreso = stod(linea);
+    float egreso = stof(linea);
     archivo.close();
     return egreso;
 }
 
 class Dispensador {
 public:
-    double denominaciones[11] = {200, 100, 50, 20, 10, 5, 2, 1, 0.5, 0.2, 0.1};
+    float denominaciones[11] = {200, 100, 50, 20, 10, 5, 2, 1, 0.5, 0.2, 0.1};
     int cantidadBilletes[11] = {10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10};
     int cortesEntregados[11] = {0};
 
@@ -242,47 +241,56 @@ public:
         cout<<endl;
     }
     
-    bool retirarMonto(double monto);
+    bool retirarMonto(float monto);
     void mostrarCortes(ALLEGRO_FONT* font, int x, int y);
-    void aceptarDeposito(double monto);
+    void aceptarDeposito(float monto);
 };
 
-bool Dispensador::retirarMonto(double monto) { //500.0
+bool Dispensador::retirarMonto(float monto) {
     monto = round(monto * 10.0) / 10.0; 
-    double montoRestante = monto; //500
+    float montoRestante = monto;
 
-    int cortesTemporales[11] = {0};
+    int* cortesTemporales = new int[11]();
+    int* ptrCortesTemporales = cortesTemporales;
 
     for (int i = 0; i < 11; i++) {
         if (montoRestante >= denominaciones[i]) {
-            int cantidad = static_cast<int>(montoRestante / denominaciones[i]); //2
+            int cantidad = static_cast<int>(montoRestante / denominaciones[i]);
             if (cantidad > cantidadBilletes[i]) {
                 cantidad = cantidadBilletes[i];
             }
             cortesTemporales[i] = cantidad;
             montoRestante -= cantidad * denominaciones[i];
             montoRestante = round(montoRestante * 100.0) / 100.0;
+            ptrCortesTemporales++;
         }
     }
+
+    ptrCortesTemporales = cortesTemporales;
 
     if (montoRestante > 0.001) {
         cout << "No se puede cubrir el monto exacto. Falta: " << montoRestante << " Bs" << endl;
         return false;
     }
+
     for (int i = 0; i < 11; i++) {
         cortesEntregados[i] = 0;
     }
+
     for (int i = 0; i < 11; i++) {
-        cantidadBilletes[i] -= cortesTemporales[i];
-        cortesEntregados[i] += cortesTemporales[i];
+        cantidadBilletes[i] -= *ptrCortesTemporales;
+        cortesEntregados[i] += *ptrCortesTemporales;
+        ptrCortesTemporales++;
     }
+
+    delete[] cortesTemporales;
     return true;
 }
 
 
-void Dispensador::aceptarDeposito(double monto) {
+void Dispensador::aceptarDeposito(float monto) {
     int cantidadDeposito;
-    double montoRestante = round(monto * 10.0) / 10.0;
+    float montoRestante = round(monto * 10.0) / 10.0;
 
     for (int i = 0; i < 11; i++) {
         if (montoRestante >= denominaciones[i]) {
@@ -335,11 +343,11 @@ private:
     //Creacion de cuenta variables
     string nuevo_numeroCuenta;
     string nuevo_nip;
-    double saldo_inicial;
+    float saldo_inicial;
     //Variables para iniciar sesion
     int numeroCuenta;
     int inicio_nip;
-    double saldo_pantalla;
+    float saldo_pantalla;
     //varialble retirar
     int montoRetirar;
     //cortes
@@ -396,9 +404,9 @@ CajeroAutomatico::~CajeroAutomatico() {
 }
 
 void CajeroAutomatico::Iniciar() {
-    double last_time = al_get_time();
+    float last_time = al_get_time();
     while (true) {
-        double current_time = al_get_time();
+        float current_time = al_get_time();
         if (current_time - last_time >= 1.0 / 60.0) {
             last_time = current_time;
 
@@ -435,11 +443,12 @@ void CajeroAutomatico::DibujarPantalla() {
 
     if (estadoActual == ESPERANDO_USUARIO) {
         al_draw_text(font, al_map_rgb(0, 0, 0), 320, 70, ALLEGRO_ALIGN_CENTER, "Bienvenido, Ingrese su Número de cuenta");
-        al_draw_text(font, al_map_rgb(0, 0, 0), 160, 400, ALLEGRO_ALIGN_CENTER, "No tienes cuenta?,ingresa 0");
+        al_draw_text(font, al_map_rgb(0, 0, 0), 190, 400, ALLEGRO_ALIGN_CENTER, "No tienes cuenta?,ingresa 0");
     } else if (estadoActual == ESPERANDO_NIP) {
         al_draw_text(font, al_map_rgb(0, 0, 0), 320, 70, ALLEGRO_ALIGN_CENTER, "Ingrese su NIP:");
     } else if (estadoActual == MOSTRANDO_OPCIONES) {
         al_draw_text(font, al_map_rgb(0, 0, 0), 320, 50, ALLEGRO_ALIGN_CENTER, "1. Depositar | 2. Retirar | 3. Movimientos");
+        al_draw_text(font, al_map_rgb(0, 0, 0), 160, 400, ALLEGRO_ALIGN_CENTER, "Salir ingrese 0");
         sistema.mostrarSaldo(numeroCuenta, font, display);
     } else if (estadoActual == ESPERANDO_MONTO_DEPOSITO) {
         al_draw_text(font, al_map_rgb(0, 0, 0), 320, 50, ALLEGRO_ALIGN_CENTER, "Por favor,ingrese el monto que desea depositar");
@@ -447,7 +456,7 @@ void CajeroAutomatico::DibujarPantalla() {
         al_draw_text(font, al_map_rgb(0, 0, 0), 320, 50, ALLEGRO_ALIGN_CENTER, "Por favor, escriba el monto que desea retirar");
     } else if(estadoActual == MOSTRAR_CORTE_RETIRADO) {
         al_draw_text(font, al_map_rgb(0, 0, 0), 320, 50, ALLEGRO_ALIGN_CENTER, "Retiro concretado con exito , saque el dinero de la ranura");
-        al_draw_text(font, al_map_rgb(0, 0, 0), 160, 400, ALLEGRO_ALIGN_CENTER, "Escribe 0 para volver al menu");
+        al_draw_text(font, al_map_rgb(0, 0, 0), 190, 400, ALLEGRO_ALIGN_CENTER, "Escribe 0 para volver al menu");
         dispensador.mostrarCortes(font, 530, 620); 
     } else if(estadoActual == OPERACION_FALLIDA_RETIRO) {
         al_draw_text(font, al_map_rgb(0, 0, 0), 320, 50, ALLEGRO_ALIGN_CENTER, "Saldo insuficiente para retirar o revise el dispensador");
@@ -463,16 +472,16 @@ void CajeroAutomatico::DibujarPantalla() {
         al_draw_text(font, al_map_rgb(0, 0, 0), 320, 50, ALLEGRO_ALIGN_CENTER, "Cuenta Creada con exito! Bienvenido a esta familia");
         al_draw_text(font, al_map_rgb(0, 0, 0), 160, 400, ALLEGRO_ALIGN_CENTER, "Salir ingrese 0");
     } else if(estadoActual == VER_MOVIMIENTOS) {
-        double ingresos = sistema.Ingresos(numeroCuenta);
-        double egresos = sistema.Egresos(numeroCuenta); 
+        float ingresos = sistema.Ingresos(numeroCuenta);
+        float egresos = sistema.Egresos(numeroCuenta); 
         al_draw_textf(font, al_map_rgb(0, 0, 0), 320, 60, ALLEGRO_ALIGN_CENTER, "Ingresos: %.2f Bs", ingresos);
         al_draw_textf(font, al_map_rgb(0, 0, 0), 320, 70, ALLEGRO_ALIGN_CENTER, "Egresos: %.2f Bs", egresos);
         al_draw_text(font, al_map_rgb(0, 0, 0), 320, 400, ALLEGRO_ALIGN_CENTER, "Escribe 0 para volver al menu");
     } else if(estadoActual == CREAR_CUENTA) {
         al_draw_textf(font, al_map_rgb(0, 0, 0), 320, 100, ALLEGRO_ALIGN_CENTER, "presione ENTER para finalizar");
     } else if(estadoActual == MOSTRAR_DEPOSITO_EXITOSO) {
-        al_draw_textf(font, al_map_rgb(0, 0, 0), 320, 100, ALLEGRO_ALIGN_CENTER, "Deposito exitoso porfavor revise su saldo");
-        al_draw_text(font, al_map_rgb(0, 0, 0), 160, 400, ALLEGRO_ALIGN_CENTER, "Escribe 0 para volver al menu");
+        al_draw_textf(font, al_map_rgb(0, 0, 0), 320, 70, ALLEGRO_ALIGN_CENTER, "Deposito exitoso porfavor revise su saldo");
+        al_draw_text(font, al_map_rgb(0, 0, 0), 190, 400, ALLEGRO_ALIGN_CENTER, "Escribe 0 para volver al menu");
     }
 
     //Dibujar extras
@@ -551,7 +560,7 @@ void CajeroAutomatico::ProcesarEntrada(int x, int y) {
     int btnSize = 60, gap = 10;
     int xStart = 150, yStart = 500;
 
-    double monto = 0.0;
+    float monto = 0.0;
 
     // Teclado
     for (int i = 0; i < 9; i++) {
@@ -635,8 +644,9 @@ void CajeroAutomatico::ProcesarEntrada(int x, int y) {
                 break;
 
             case CREAR_CUENTA_ESPERAR_NUMERO_CUENTA:
-                if(inputActual == "") {
+                if(inputActual == "0") {
                     estadoActual = ESPERANDO_USUARIO;
+                    inputActual.clear();
                 }
                 if (inputActual.size() != 5) {
                     cout << "ERROR: El número de cuenta debe ser de 5 dígitos." << endl;
@@ -664,7 +674,7 @@ void CajeroAutomatico::ProcesarEntrada(int x, int y) {
                 }
 
                 try {
-                    saldo_inicial = stod(inputActual);  // Convertir a saldo
+                    saldo_inicial = stof(inputActual);  // Convertir a saldo
                     if (saldo_inicial <= 0) {
                         cout << "ERROR: El saldo inicial debe ser mayor que 0." << endl;
                         return;
@@ -691,6 +701,13 @@ void CajeroAutomatico::ProcesarEntrada(int x, int y) {
                 break;
 
             case MOSTRANDO_OPCIONES:
+                if(inputActual.empty()) {
+                    return;
+                }
+                if(inputActual == "0") {
+                    estadoActual = ESPERANDO_USUARIO;
+                    inputActual.clear();
+                }
                 if (inputActual == "1") {
                     estadoActual = ESPERANDO_MONTO_DEPOSITO;
                     inputActual.clear();
@@ -708,7 +725,7 @@ void CajeroAutomatico::ProcesarEntrada(int x, int y) {
                     return;
                 }
 
-                monto = stod(inputActual);
+                monto = stof(inputActual);
 
                 if(dispensador.retirarMonto(monto)) {
                     sistema.Retirar(numeroCuenta,monto);
@@ -748,7 +765,7 @@ void CajeroAutomatico::ProcesarEntrada(int x, int y) {
                     inputActual.clear();
                   }
 
-                  monto = stod(inputActual);
+                  monto = stof(inputActual);
                   dispensador.aceptarDeposito(monto);
                   sistema.Depositar(numeroCuenta, monto);
 
