@@ -41,6 +41,9 @@ class SistemaBanco {
     double Egresos(int numCuenta);
     void Depositar(int numCuenta,double montoIngresado);
     void mostrarSaldo(int numCuenta, ALLEGRO_FONT* font, ALLEGRO_DISPLAY* display);
+    ~SistemaBanco() {
+        cout << endl;
+    }
 };
 
 void SistemaBanco::registrarCliente(int numeroCuenta,int nip,double saldo,double ingreso,double egreso) {
@@ -235,20 +238,24 @@ public:
     int cantidadBilletes[11] = {10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10};
     int cortesEntregados[11] = {0};
 
+    ~Dispensador(){
+        cout<<endl;
+    }
+    
     bool retirarMonto(double monto);
     void mostrarCortes(ALLEGRO_FONT* font, int x, int y);
     void aceptarDeposito(double monto);
 };
 
-bool Dispensador::retirarMonto(double monto) {
-    monto = round(monto * 100.0) / 100.0;
-    double montoRestante = monto;
+bool Dispensador::retirarMonto(double monto) { //500.0
+    monto = round(monto * 10.0) / 10.0; 
+    double montoRestante = monto; //500
 
     int cortesTemporales[11] = {0};
 
     for (int i = 0; i < 11; i++) {
         if (montoRestante >= denominaciones[i]) {
-            int cantidad = static_cast<int>(montoRestante / denominaciones[i]);
+            int cantidad = static_cast<int>(montoRestante / denominaciones[i]); //2
             if (cantidad > cantidadBilletes[i]) {
                 cantidad = cantidadBilletes[i];
             }
@@ -275,19 +282,20 @@ bool Dispensador::retirarMonto(double monto) {
 
 void Dispensador::aceptarDeposito(double monto) {
     int cantidadDeposito;
-    double montoRestante = monto;
+    double montoRestante = round(monto * 10.0) / 10.0;
 
     for (int i = 0; i < 11; i++) {
         if (montoRestante >= denominaciones[i]) {
-            cantidadDeposito = montoRestante / denominaciones[i];
+            cantidadDeposito = static_cast<int>(montoRestante / denominaciones[i]);
             montoRestante -= cantidadDeposito * denominaciones[i];
+            montoRestante = round(montoRestante * 10.0) / 10.0;
             cantidadBilletes[i] += cantidadDeposito;
         }
     }
 
-    if (montoRestante > 0) {
+    if (montoRestante > 0.001) {
         cout << "No se pudo cubrir el monto exacto con las denominaciones disponibles." << endl;
-    }
+    }  
 }
 
 void Dispensador::mostrarCortes(ALLEGRO_FONT* font, int x, int y) {
