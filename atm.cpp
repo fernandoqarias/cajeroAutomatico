@@ -11,6 +11,7 @@ using namespace std;
 enum Estado {
     ESPERANDO_USUARIO,
     CREAR_CUENTA_ESPERAR_NUMERO_CUENTA,
+    NUMERO_DE_CUENTA_EXISTENTE,
     CREAR_CUENTA_ESPERAR_NIP,
     CREAR_CUENTA_SALDO,
     CREAR_CUENTA,
@@ -347,6 +348,7 @@ private:
     //Variables para iniciar sesion
     int numeroCuenta;
     int inicio_nip;
+    int nuevo_usuario;
     float saldo_pantalla;
     //varialble retirar
     int montoRetirar;
@@ -482,6 +484,9 @@ void CajeroAutomatico::DibujarPantalla() {
     } else if(estadoActual == MOSTRAR_DEPOSITO_EXITOSO) {
         al_draw_textf(font, al_map_rgb(0, 0, 0), 320, 70, ALLEGRO_ALIGN_CENTER, "Deposito exitoso porfavor revise su saldo");
         al_draw_text(font, al_map_rgb(0, 0, 0), 190, 400, ALLEGRO_ALIGN_CENTER, "Escribe 0 para volver al menu");
+    } else if(estadoActual == NUMERO_DE_CUENTA_EXISTENTE) {
+        al_draw_textf(font, al_map_rgb(0, 0, 0), 320, 70, ALLEGRO_ALIGN_CENTER, "EL numero de cuenta ya existe!");
+        al_draw_text(font, al_map_rgb(0, 0, 0), 190, 400, ALLEGRO_ALIGN_CENTER, "Escribe 0 para volver");   
     }
 
     //Dibujar extras
@@ -628,7 +633,7 @@ void CajeroAutomatico::ProcesarEntrada(int x, int y) {
                     return;
                 }
                 try {
-                    inicio_nip = stoi(inputActual);  // Convertir a NIP
+                    inicio_nip = stoi(inputActual);
                 } catch (const std::invalid_argument&) {
                     cout << "ERROR: NIP inválido." << endl;
                     return;
@@ -644,22 +649,44 @@ void CajeroAutomatico::ProcesarEntrada(int x, int y) {
                 break;
 
             case CREAR_CUENTA_ESPERAR_NUMERO_CUENTA:
+                if (inputActual.empty()) {
+                    cout << "ERROR No se ingresó un usuario." << endl;
+                    return;
+                }
                 if(inputActual == "0") {
                     estadoActual = ESPERANDO_USUARIO;
                     inputActual.clear();
-                }
-                if (inputActual.size() != 5) {
-                    cout << "ERROR: El número de cuenta debe ser de 5 dígitos." << endl;
                     return;
                 }
-                nuevo_numeroCuenta = inputActual;
+                if (inputActual.size() != 5) {
+                    inputActual.clear();
+                    return;
+                } 
+                try {
+                    nuevo_usuario = stoi(inputActual);
+                } catch(const std::invalid_argument&) {
+                    return;
+                }
+                if(sistema.existeCuenta(nuevo_usuario)) {
+                    estadoActual = NUMERO_DE_CUENTA_EXISTENTE;
+                    inputActual.clear();
+                    return;
+                }
                 estadoActual = CREAR_CUENTA_ESPERAR_NIP;
                 inputActual.clear();
                 break;
+  
+            case NUMERO_DE_CUENTA_EXISTENTE:
+                if(inputActual == "0") {
+                    estadoActual = CREAR_CUENTA_ESPERAR_NUMERO_CUENTA;
+                    inputActual.clear();
+                    return;
+                }
+                return;
 
             case CREAR_CUENTA_ESPERAR_NIP:
                 if (inputActual.size() != 5) {
-                    cout << "ERROR: El NIP debe ser de 5 dígitos." << endl;
+                    inputActual.clear();
                     return;
                 }
                 nuevo_nip = inputActual;
@@ -688,7 +715,7 @@ void CajeroAutomatico::ProcesarEntrada(int x, int y) {
                 break;
 
             case CREAR_CUENTA:
-                sistema.registrarCliente(stoi(nuevo_numeroCuenta), stoi(nuevo_nip), saldo_inicial, saldo_inicial, 0.0);
+                sistema.registrarCliente(nuevo_usuario, stoi(nuevo_nip), saldo_inicial, saldo_inicial, 0.0);
                 estadoActual = CUENTA_CREADA_EXITO;
                 inputActual.clear();
                 break;
