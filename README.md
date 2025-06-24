@@ -1,5 +1,5 @@
 # ATM
-## Cajero Automático - Simulación con Paradigma Orientado a Objetos
+### Cajero Automático - Simulación con Paradigma Orientado a Objetos
 
 ## Descripción
 Este proyecto simula un cajero automático (ATM) utilizando el paradigma de programación orientada a objetos en C++. El sistema permite a los usuarios realizar operaciones bancarias como consultas de saldo, retiros y depósitos, todo a través de una interfaz gráfica simulada con la librería **Allegro**. 
