@@ -248,11 +248,12 @@ public:
 };
 
 bool Dispensador::retirarMonto(float monto) {
-    monto = round(monto * 10.0) / 10.0; 
+    monto = round(monto * 10.0f) / 10.0f;
     float montoRestante = monto;
 
-    int* cortesTemporales = new int[11]();
-    int* ptrCortesTemporales = cortesTemporales;
+    int cortesTemporales[11] = {0};
+
+    cout << "Intentando cubrir el monto: " << monto << " Bs" << endl;
 
     for (int i = 0; i < 11; i++) {
         if (montoRestante >= denominaciones[i]) {
@@ -262,14 +263,11 @@ bool Dispensador::retirarMonto(float monto) {
             }
             cortesTemporales[i] = cantidad;
             montoRestante -= cantidad * denominaciones[i];
-            montoRestante = round(montoRestante * 100.0) / 100.0;
-            ptrCortesTemporales++;
+            montoRestante = round(montoRestante * 100.0f) / 100.0f; // redondeo a centavos
         }
     }
 
-    ptrCortesTemporales = cortesTemporales;
-
-    if (montoRestante > 0.001) {
+    if (montoRestante > 0.001f) {
         cout << "No se puede cubrir el monto exacto. Falta: " << montoRestante << " Bs" << endl;
         return false;
     }
@@ -279,32 +277,29 @@ bool Dispensador::retirarMonto(float monto) {
     }
 
     for (int i = 0; i < 11; i++) {
-        cantidadBilletes[i] -= *ptrCortesTemporales;
-        cortesEntregados[i] += *ptrCortesTemporales;
-        ptrCortesTemporales++;
+        cantidadBilletes[i] -= cortesTemporales[i];
+        cortesEntregados[i] = cortesTemporales[i];
     }
 
-    delete[] cortesTemporales;
     return true;
 }
 
-
 void Dispensador::aceptarDeposito(float monto) {
     int cantidadDeposito;
-    float montoRestante = round(monto * 10.0) / 10.0;
+    float montoRestante = round(monto * 10.0f) / 10.0f;
 
     for (int i = 0; i < 11; i++) {
         if (montoRestante >= denominaciones[i]) {
             cantidadDeposito = static_cast<int>(montoRestante / denominaciones[i]);
             montoRestante -= cantidadDeposito * denominaciones[i];
-            montoRestante = round(montoRestante * 10.0) / 10.0;
+            montoRestante = round(montoRestante * 100.0f) / 100.0f;
             cantidadBilletes[i] += cantidadDeposito;
         }
     }
 
-    if (montoRestante > 0.001) {
+    if (montoRestante > 0.001f) {
         cout << "No se pudo cubrir el monto exacto con las denominaciones disponibles." << endl;
-    }  
+    }
 }
 
 void Dispensador::mostrarCortes(ALLEGRO_FONT* font, int x, int y) {
