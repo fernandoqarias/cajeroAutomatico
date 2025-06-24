@@ -462,7 +462,7 @@ void CajeroAutomatico::DibujarPantalla() {
         al_draw_text(font, al_map_rgb(0, 0, 0), 320, 50, ALLEGRO_ALIGN_CENTER, "Escriba un numero de cuenta 5 digitos");
         al_draw_text(font, al_map_rgb(0, 0, 0), 160, 400, ALLEGRO_ALIGN_CENTER, "Salir ingrese 0");
     } else if(estadoActual == CREAR_CUENTA_ESPERAR_NIP) {
-        al_draw_text(font, al_map_rgb(0, 0, 0), 320, 50, ALLEGRO_ALIGN_CENTER, "Escriba un NIP 5 digitos");
+        al_draw_text(font, al_map_rgb(0, 0, 0), 320, 50, ALLEGRO_ALIGN_CENTER, "Escriba un NIP");
     } else if(estadoActual == CREAR_CUENTA_SALDO) {
         al_draw_text(font, al_map_rgb(0, 0, 0), 320, 50, ALLEGRO_ALIGN_CENTER, "Porfavor digite su saldo inicial");
     } else if(estadoActual == CUENTA_CREADA_EXITO) {
