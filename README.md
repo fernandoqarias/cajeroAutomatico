@@ -64,6 +64,11 @@ Abre un pull request describiendo tu cambio gracias!.
 
 ## Imagen de la Interfaz
 ![Imagen](https://media.discordapp.net/attachments/1371708428753440820/1384463412385550358/Shot-2025-06-17-052249.png?ex=68528587&is=68513407&hm=fb0d7868c94f25182a695fa141e9bfdbe27f749cb324ce5454682e879f13e609&=&format=webp&quality=lossless&width=1132&height=796)
+
+## Diagrama de clases
+
+![Image](https://media.discordapp.net/attachments/1371708350412230726/1386962778354618418/mermaid-diagram-2025-06-23-233727.png?ex=685b9d3e&is=685a4bbe&hm=4ca376b6fac8c02d67ceea0682cc9b70ed630f8e931d38e89038b8fc3c6bf2b2&=&format=webp&quality=lossless&width=1309&height=796)
+
 ## Autores
 Oscar Santiago Abuawad Velasco - oscar.abuawad@ucb.edu.bo
 
