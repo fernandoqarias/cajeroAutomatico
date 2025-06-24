@@ -36,7 +36,7 @@ class SistemaBanco {
     bool verificarNip(int numCuenta,int n);
     float obtenerSaldo(int numCuenta);
     bool existeCuenta(int numCuenta);
-    void Retirar(int numCuenta,float montoRetiro);
+    bool Retirar(int numCuenta,float montoRetiro);
     float Ingresos(int numCuenta);
     float Egresos(int numCuenta);
     void Depositar(int numCuenta,float montoIngresado);
@@ -120,12 +120,12 @@ float SistemaBanco::obtenerSaldo(int numCuenta) {
     return 0.0;
 }
 
-void SistemaBanco::Retirar(int numCuenta,float montoRetiro) {
+bool SistemaBanco::Retirar(int numCuenta,float montoRetiro) {
     string nombre_archivo = to_string(numCuenta);
     ifstream archivo(nombre_archivo);
     if(!archivo.is_open()) {
         cout << "error abrir archivo" << endl;
-        return;
+        return false;
     }
     string linea;
     int numeroCuenta,nip;
@@ -138,7 +138,7 @@ void SistemaBanco::Retirar(int numCuenta,float montoRetiro) {
 
     if(montoRetiro > saldo) {
         archivo.close();
-        return;
+        return false;
     }
 
     saldo -= montoRetiro;
@@ -148,7 +148,7 @@ void SistemaBanco::Retirar(int numCuenta,float montoRetiro) {
     ofstream archivoSalida(nombre_archivo);
 
     if(!archivoSalida.is_open()) {
-        return;
+        return false;
     }
 
     archivoSalida << numeroCuenta << endl;
@@ -158,6 +158,8 @@ void SistemaBanco::Retirar(int numCuenta,float montoRetiro) {
     archivoSalida << egreso << endl;
 
     archivoSalida.close();
+
+    return true;
 }
 
 void SistemaBanco::Depositar(int numCuenta,float montoIngresado) {
@@ -749,7 +751,7 @@ void CajeroAutomatico::ProcesarEntrada(int x, int y) {
 
                 monto = stof(inputActual);
 
-                if(dispensador.retirarMonto(monto)) {
+                if(sistema.Retirar(numeroCuenta,monto) && dispensador.retirarMonto(monto)) {
                     sistema.Retirar(numeroCuenta,monto);
                     estadoActual = MOSTRAR_CORTE_RETIRADO;
                     inputActual.clear();
